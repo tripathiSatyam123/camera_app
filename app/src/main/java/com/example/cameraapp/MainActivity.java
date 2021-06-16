@@ -1,16 +1,20 @@
 package com.example.cameraapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     ImageView image;
@@ -50,6 +54,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_PERMISSION_CODE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                takePicture();
+            }else{
+                Toast.makeText(this, "App needs permission for using camera", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CAMERA_IMAGE_CODE){
+            if (resultCode==RESULT_OK){
+                Bitmap takenImage = (Bitmap) data.getExtras().get("data");
+                image.setImageBitmap(takenImage);
+            }
+        }
+
+
 
     }
 
